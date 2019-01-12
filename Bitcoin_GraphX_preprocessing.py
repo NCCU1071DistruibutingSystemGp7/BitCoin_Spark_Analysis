@@ -20,27 +20,6 @@ def align_timestamp_to_minute(timestamp):
     timestamp = int(timestamp)
     timestamp = timestamp - (timestamp % 60)
     return str(timestamp)
-
-'''
-def sum_simultaneous_transaction(rdd):
-    rdd = rdd.map(lambda line: ((line[SENDER], line[RECEIVER], align_timestamp_to_minute(line[TIMESTAMP])), float(line[VALUE])))\
-        .reduceByKey(add)\
-        .map(lambda line: (line[0][0], line[0][1], line[1], line[0][2]))\
-        .filter(lambda line: line[VALUE] != 0.0)
-    return rdd
-
-def split_send_recv(rdd):
-    rdd = rdd.flatMap(lambda line: ((line[SENDER], 1, 0, line[TIMESTAMP]),
-                                    (line[RECEIVER], 0, 1, line[TIMESTAMP])))
-    return rdd
-
-def reduce_send_recv(rdd):
-    rdd = rdd.map(lambda line: ((line[0], line[1], line[2], line[3]),))\
-        .distinct()\
-        .map(lambda line: line[0])
-    return rdd
-'''
-
 def Sender_Count(rdd):
     rdd = rdd.map(lambda line: (line[SENDER], float(line[VALUE])))\
         .reduceByKey(add)
