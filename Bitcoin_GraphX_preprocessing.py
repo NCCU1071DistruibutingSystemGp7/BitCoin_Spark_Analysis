@@ -4,7 +4,7 @@ from pyspark import SparkContext
 from operator import add
 from pyspark.sql import SQLContext, SparkSession
 import csv
-import pandas
+from graphframes import *
 
 APP_NAME = 'project'
 SENDER = 0
@@ -53,10 +53,9 @@ if __name__ == '__main__':
 
     with open('Fil_Joint.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerows(Fil_Joint.collect())
+        writer.writerows(df_Joint.collect())
     
-   Fil_edge = sqlContext.createDataFrame(dataset,
-            ['sender_address', 'receiver_address', 'value', 'time']).drop('time')
+    Fil_edge = sqlContext.createDataFrame(dataset,['sender_address', 'receiver_address', 'value', 'time']).drop('time')
 
     Fil_edge.show()
     with open('Fil_edge.csv', 'w', newline='') as csvfile:
