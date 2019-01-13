@@ -22,14 +22,24 @@ if __name__ == '__main__':
     sqlContext = SQLContext(spark)
 
     logger('Ready to do GraphX...')
-    node = spark.read.load('./Fil_Joint.csv', format='csv', header=False).rdd.cache()
+    node = spark.read.load('gs://ds_fp_bucket/Fil_Joint.csv', format='csv', header=False).rdd.cache()
     v = sqlContext.createDataFrame(node, ['id','name','value'])
 #    df_node.show()
-    edge = spark.read.load('./Fil_edge.csv', format='csv', header=False).rdd.cache()
+    edge = spark.read.load('gs://ds_fp_bucket/Fil_edge.csv', format='csv', header=False).rdd.cache()
     e = sqlContext.createDataFrame(edge, ["src","dst","relationship"])
 #    df_edge.show()
 #
     graph = GraphFrame(v,e)
+
+    inDegreeDF=graph.inDegrees
+    outDegreeDF=graph.outDegrees
+    degreeDF=graph.degrees
 #
+    inDegreeDF.sort(['inDegree'],ascending=[0]).show()
+    outDegreeDF.sort(['outDegree'],ascending=[0]).show()
+    degreeDF.show()
+
+
+
     spark.stop()
     logger('Successfully construct a GraphFrame')
