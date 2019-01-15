@@ -87,7 +87,7 @@ if __name__ == '__main__':
     outDegreeRDD = outDegreeRDD.map(lambda row: (row[1], 1)).reduceByKey(add).sortBy(lambda row: row[1], ascending=False)
     show_rdd(outDegreeRDD, 10)
 
-'''
+
     # PageRank
     logger('PAGERANK')
     print('### PageRank ###')
@@ -102,7 +102,6 @@ if __name__ == '__main__':
     prEdgRDD = pr.edges.rdd
     prEdgRDD = prEdgRDD.map(lambda row: (round(float(row[3]), 5), 1)).reduceByKey(add).sortBy(lambda row: row[1], ascending=False)
     show_rdd(prEdgRDD, 10)
-'''
 #
     spark.stop()
     logger('Successfully construct a GraphFrame')
