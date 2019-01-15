@@ -88,20 +88,31 @@ if __name__ == '__main__':
     show_rdd(outDegreeRDD, 10)
 
 
-    # PageRank
+   # PageRank
     logger('PAGERANK')
     print('### PageRank ###')
     pr = g.pageRank(resetProbability=0.15, tol=0.01)
 
-    print('PageRank analysis 1: vertices score (pagerank) rank top/last 10')
+    print('PageRank analysis 1: vertices score (pagerank) rank top 10')
+    prVerRDD = pr.vertices.rdd
+    prVerRDD = prVerRDD.sortBy(lambda row: row[3], ascending=False)
+    show_rdd(prVerRDD, 10)
+    
+    print('PageRank analysis 2: value of vertices score (pagerank) rank top/last 10')
     prVerRDD = pr.vertices.rdd
     prVerRDD = prVerRDD.map(lambda row: (round(float(row[3]), 5), 1)).reduceByKey(add).sortBy(lambda row: row[1], ascending=False)
     show_rdd(prVerRDD, 10)
 
-    print('PageRank analysis 2: edges weight rank top 10')
+    print('PageRank analysis 3: edges weight rank top 10')
+    prEdgRDD = pr.edges.rdd
+    prEdgRDD = prEdgRDD.sortBy(lambda row: row[3], ascending=False)
+    show_rdd(prEdgRDD, 10)
+
+    print('PageRank analysis 4: value of edges weight rank top 10')
     prEdgRDD = pr.edges.rdd
     prEdgRDD = prEdgRDD.map(lambda row: (round(float(row[3]), 5), 1)).reduceByKey(add).sortBy(lambda row: row[1], ascending=False)
     show_rdd(prEdgRDD, 10)
+
 #
     spark.stop()
     logger('Successfully construct a GraphFrame')
