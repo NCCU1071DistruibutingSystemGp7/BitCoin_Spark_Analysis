@@ -37,16 +37,21 @@ if __name__ == '__main__':
     spark = SparkSession.builder.appName(APP_NAME).getOrCreate()
     sqlContext = SQLContext(spark)
     logger('Reading blockchain data...')
-    CSV = './output_part4.csv'
-    dataset = spark.read.load(CSV, format='csv', header=False).rdd.cache()
-    Fil_edge = sqlContext.createDataFrame(dataset,['sender_address', 'receiver_address', 'value', 'time']).drop('time')
-    Fil_edge.show()
-    with open('./Final_Preprocessing/Fil_edge_p4.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(Fil_edge.collect())
+    Sep_edge = './Final_Preprocessing/Fil_edge_'
+    Edge_p1  = spark.read.load(Sep_edge+'p1.csv', format='csv', header=False)
+    Edge_p2  = spark.read.load(Sep_edge+'p2.csv', format='csv', header=False)
+    Edge_p3  = spark.read.load(Sep_edge+'p3.csv', format='csv', header=False)
+    Edge_p4  = spark.read.load(Sep_edge+'p4.csv', format='csv', header=False)
 
-    Fil_Send = Sender_Count(Fil_edge.rdd.cache())
-    Fil_Rece = Receiver_Count(Fil_edge.rdd.cache())
+    Finalized_Edge = Edge_p1.union(Edge_p2).union(Edge_p3).union(Edge_p4)
+    Finalized_Edge.show()
+
+    with open('./Final_Preprocessing/Fil_edge.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(Finalized_Edge.collect())
+
+    Fil_Send = Sender_Count(Finalized_Edge.rdd.cache())
+    Fil_Rece = Receiver_Count(Finalized_Edge.rdd.cache())
     df_Send = sqlContext.createDataFrame(Fil_Send, ['txid', 'value'])
     df_Rece = sqlContext.createDataFrame(Fil_Rece, ['txid', 'value'])
    
@@ -57,7 +62,7 @@ if __name__ == '__main__':
     df_Joint = df_Joint.select(['txid','name','value'])
 
 #    df_Joint.write.csv('Fil_Joint_p1.csv')
-    with open('./Final_Preprocessing/Fil_Joint_p4.csv', 'w', newline='') as csvfile:
+    with open('./Final_Preprocessing/Fil_Joint.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(df_Joint.collect())
     
